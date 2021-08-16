@@ -18,6 +18,10 @@ fi
 if [ ! -d ${backup_log_path} ];then
     mkdir -p ${backup_log_path}
 fi
+
+# 删除三天前的增量备份目录
+find ${backup_data_path} -maxdepth 1 -type d -mtime +3 | xargs rm -rf
+
  
 log_file=$(date +"%Y%m%d")
  

@@ -6,7 +6,7 @@ port=27017
 user=root
 password=BDRXBkmqblP1
 target_path=/backup/mongodb78
-backpath=${target_path}/mongodb_oplog_bak//mongo-27017
+backpath=${target_path}/mongodb_oplog_bak/mongo-27017
 mongorestore=/usr/bin/mongorestore
  
 echo -e "\033[31;1m*****[ Mongodb ] 增量恢复脚本*****\033[0m"
