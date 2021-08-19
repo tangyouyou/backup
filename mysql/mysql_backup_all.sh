@@ -7,6 +7,13 @@ back_prefix=/backup/mysql
 back_dir=${back_prefix}/${dir_time} # 备份路径(全量 & 增量)
 innodbupex="/usr/bin/innobackupex"
 mysql_cmd=" --defaults-file=/etc/mysql/default.my.cnf --user=root --password=oF7Df72P_NWs --host=mysql-default.service.consul --port=3306 " #数据库连接信息
+binlog_dir=/data/bkce/public/mysql/default/binlog # binlog 日志文件所在目录
+binlog_server[0]={"ip":"192.168.244.151"}
+binlog_back_dir=${back_prefix}/binlog # binlog 日志文件复制目录
+
+parse_json(){
+echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
+}
 
 
 if [ ! -d ${back_dir} ]
@@ -27,6 +34,14 @@ then
                 ${innodbupex} ${mysql_cmd} $back_dir
         fi
 fi
+
+# binlog 日志同步
+for item in ${binlog_server[*]}
+do
+s_ip=$(parse_json $item "ip")
+echo $s_ip
+rsync -av --delete  ${binlog_dir}/ $s_ip:${binlog_back_dir}
+done
 
 # 删除三天前的历史备份文件
 baktime=$(date -d '-3 days' "+%Y-%m-%d")
