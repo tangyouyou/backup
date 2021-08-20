@@ -92,4 +92,32 @@ binlog 日志备份路径：binlog_back_dir 变量
 
 步骤14：sh /backup/mysql_back_all.sh；重新进行全量备份
 
+# MongoBb
+
+## 使用说明
+
+1. MongoDB 数据采用 mongodump 进行数据备份，官方描述 mongodump 只能备份小数据量的场景，当出现备份脚本不适用时，可以寻找其他的备份方案
+
+2. MongoDB 增量备份，依赖于 MongoDB 的副本集 oplog.bson ，只有副本集的 MongoDB 架构可以进行增量备份。
+
+3. 将全量备份脚本添加到 /etc/crontab 中，建议每天凌晨2点执行一次：0 2 * * * root sh /backup/mongodb_backup_all.sh
+
+4. 将增量备份脚本添加到 /etc/crontab 中，建议每3个小时执行一次：0 */3 * * * root sh /backup/mongodb_backup_incremental.sh
+
+### 全量备份
+使用说明：
+
+1. 修改配置参数，根据实际情况填写
+
+### 增量备份
+使用说明：
+
+1. 修改配置参数，根据实际情况填写
+
+## 数据恢复
+使用说明：
+
+1. Mongodb 的全量数据恢复、增量数据恢复比较简单，直接执行脚本即可
+
+2. 根据实际情况，修改脚本的参数信息
  
