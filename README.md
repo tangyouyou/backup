@@ -92,7 +92,7 @@ binlog 日志备份路径：binlog_back_dir 变量
 
 步骤14：sh /backup/mysql_back_all.sh；重新进行全量备份
 
-# MongoBb
+# MongoDB
 
 ## 使用说明
 
