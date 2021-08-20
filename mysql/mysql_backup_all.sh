@@ -1,16 +1,16 @@
 #!/bin/sh
 set -e
-lang=C
 current_time=`date +%Y-%m-%d`
-dir_time=${current_time}
-back_prefix=/backup/mysql 
+dir_time=${current_time} # 当前备份时间 
+back_prefix=/backup/mysql  # MySQL 备份路径的前缀
 back_dir=${back_prefix}/${dir_time} # 备份路径(全量 & 增量)
-innodbupex="/usr/bin/innobackupex"
+innodbupex=/usr/bin/innobackupex # 备份的软件地址
 mysql_cmd=" --defaults-file=/etc/mysql/default.my.cnf --user=root --password=oF7Df72P_NWs --host=mysql-default.service.consul --port=3306 " #数据库连接信息
 binlog_dir=/data/bkce/public/mysql/default/binlog # binlog 日志文件所在目录
-binlog_server[0]={"ip":"192.168.244.151"}
+backup_server[0]={"ip":"127.0.0.1"} # binlog 日志同步到远程服务器数组
 binlog_back_dir=${back_prefix}/binlog # binlog 日志文件复制目录
 
+# 格式化
 parse_json(){
 echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
 }
@@ -35,12 +35,14 @@ then
         fi
 fi
 
-# binlog 日志同步
-for item in ${binlog_server[*]}
+# binlog 日志、MySQL 全量数据 同步到远程服务器
+for item in ${backup_server[*]}
 do
 s_ip=$(parse_json $item "ip")
 echo $s_ip
 rsync -av --delete  ${binlog_dir}/ $s_ip:${binlog_back_dir}
+rsync -av --delete  ${back_prefix}/ $s_ip:${back_prefix}
+done
 done
 
 # 删除三天前的历史备份文件

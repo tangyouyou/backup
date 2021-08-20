@@ -30,7 +30,8 @@ if [ ! -d "${fullpath}" ];then
 fi
  
 execute
- 
+
+# 删除3天前的全量备份目录
 backtime=$(date -d '-3 days' "+%Y%m%d")
 if [ -d "${targetpath}/${backtime}/" ];then
     rm -rf "${targetpath}/${backtime}/"
