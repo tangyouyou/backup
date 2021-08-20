@@ -8,15 +8,15 @@
 
 主要包括
 
-user、port、host、mysql 配置文件路径：mysql_cmd 变量
+mysql_cmd : user、port、host、mysql 配置文件路径
 
-binlog 日志文件路径：binlog_dir 变量
+binlog_dir: binlog 日志文件路径
 
-binlog 日志备份路径：binlog_back_dir 变量
+binlog_back_dir : binlog 日志备份路径
 
-远程同步服务器数组：backup_server 变量
+backup_server : 远程同步服务器数组
 
-数据备份路径 ：back_dir 变量
+back_dir : 数据备份路径
 
 2. 将备份脚本添加到 /etc/crontab 中，建议每一个小时执行一次：0 */1 * * * root sh /backup/mysql_backup_all.sh
 
