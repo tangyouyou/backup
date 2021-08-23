@@ -10,6 +10,7 @@ password=BDRXBkmqblP1
 backup_path=/backup/mongodb
 backup_data_path=${backup_path}/mongodb_oplog_bak/mongo-$port
 backup_log_path=${backup_path}/mongodb_oplog_bak/log-$port
+backup_server[0]={"ip":"127.0.0.1"} # 日志同步到远程服务器数组
 
 if [ ! -d ${backup_data_path} ];then
     mkdir -p ${backup_data_path}
@@ -21,6 +22,16 @@ fi
 
 # 删除三天前的增量备份目录
 find ${backup_data_path} -maxdepth 1 -type d -mtime +3 | xargs rm -rf
+
+# MongoDB 增量数据，同步到远程服务器
+for item in ${backup_server[*]}
+do
+s_ip=$(parse_json $item "ip")
+echo $s_ip
+rsync -avR --delete  ${backup_data_path}/ $s_ip:/
+rsync -avR --delete  ${backup_log_path}/ $s_ip:/
+done
+done
 
  
 log_file=$(date +"%Y%m%d")
@@ -81,7 +92,7 @@ then
 else
     echo "Fatal Error --备份过程已执行，但是未检测到备份产生的文件，请检查！" >> $backup_log_path/$log_file.log
 fi
- 
+
 keepbaktime=$(date -d '-3 days' "+%Y%m%d%H")*
 if [ -d $backup_data_path/mongodboplog$keepbaktime ];then
     rm -rf $backup_data_path/mongodboplog$keepbaktime

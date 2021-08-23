@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+#Author:zhongwei
 set -e
 current_time=`date +%Y-%m-%d`
 dir_time=${current_time} # 当前备份时间 
@@ -28,10 +29,10 @@ then
         if [ -d ${full_backup:-nodir} ]
         then
                 # 增量备份
-                ${innodbupex} ${mysql_cmd} --incremental ${back_dir} --incremental-basedir=$full_backup 
+                ${innodbupex} ${mysql_cmd} --incremental ${back_dir} --incremental-basedir=${full_backup} 
         else
                 # 全量备份
-                ${innodbupex} ${mysql_cmd} $back_dir
+                ${innodbupex} ${mysql_cmd} ${back_dir}
         fi
 fi
 
@@ -40,8 +41,8 @@ for item in ${backup_server[*]}
 do
 s_ip=$(parse_json $item "ip")
 echo $s_ip
-rsync -av --delete  ${binlog_dir}/ $s_ip:${binlog_back_dir}
-rsync -av --delete  ${back_prefix}/ $s_ip:${back_prefix}
+rsync -avR --delete  ${binlog_dir}/ $s_ip:/
+rsync -avR --delete  ${back_prefix}/ $s_ip:/
 done
 done
 

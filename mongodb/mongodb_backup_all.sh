@@ -10,6 +10,7 @@ targetpath=/backup/mongodb
 nowtime=`date "+%Y%m%d"`
 mongocmd=" --host ${host} --port ${port} -u $user -p ${password} --authenticationDatabase admin "
 fullpath=${targetpath}/${nowtime}
+backup_server[0]={"ip":"127.0.0.1"} # 日志同步到远程服务器数组
  
 start(){
     ${sourcepath} ${mongocmd} --oplog --gzip --out ${fullpath}
@@ -30,6 +31,15 @@ if [ ! -d "${fullpath}" ];then
 fi
  
 execute
+
+# MongoDB 全量数据，同步到远程服务器
+for item in ${backup_server[*]}
+do
+s_ip=$(parse_json $item "ip")
+echo $s_ip
+rsync -avR --delete  ${targetpath}/ $s_ip:/
+done
+done
 
 # 删除3天前的全量备份目录
 backtime=$(date -d '-3 days' "+%Y%m%d")
