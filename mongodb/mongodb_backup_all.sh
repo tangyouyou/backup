@@ -11,6 +11,11 @@ nowtime=`date "+%Y%m%d"`
 mongocmd=" --host ${host} --port ${port} -u $user -p ${password} --authenticationDatabase admin "
 fullpath=${targetpath}/${nowtime}
 backup_server[0]={"ip":"127.0.0.1"} # 日志同步到远程服务器数组
+
+# 格式化
+parse_json(){
+echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
+}
  
 start(){
     ${sourcepath} ${mongocmd} --oplog --gzip --out ${fullpath}

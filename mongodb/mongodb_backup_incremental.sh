@@ -12,6 +12,11 @@ backup_data_path=${backup_path}/mongodb_oplog_bak/mongo-$port
 backup_log_path=${backup_path}/mongodb_oplog_bak/log-$port
 backup_server[0]={"ip":"127.0.0.1"} # 日志同步到远程服务器数组
 
+# 格式化
+parse_json(){
+echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
+}
+
 if [ ! -d ${backup_data_path} ];then
     mkdir -p ${backup_data_path}
 fi
@@ -30,7 +35,6 @@ s_ip=$(parse_json $item "ip")
 echo $s_ip
 rsync -avR --delete  ${backup_data_path}/ $s_ip:/
 rsync -avR --delete  ${backup_log_path}/ $s_ip:/
-done
 done
 
  

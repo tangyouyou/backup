@@ -44,7 +44,6 @@ echo $s_ip
 rsync -avR --delete  ${binlog_dir}/ $s_ip:/
 rsync -avR --delete  ${back_prefix}/ $s_ip:/
 done
-done
 
 # 删除三天前的历史备份文件
 baktime=$(date -d '-3 days' "+%Y-%m-%d")
