@@ -11,6 +11,13 @@ binlog_dir=/data/bkce/public/mysql/default/binlog # binlog 日志文件所在目
 backup_server[0]={"ip":"127.0.0.1"} # binlog 日志同步到远程服务器数组
 binlog_back_dir=${back_prefix}/binlog # binlog 日志文件复制目录
 
+# 复制 binlog 
+if [ -d ${binlog_back_dir} ];then
+    mkdir -p ${binlog_back_dir}
+fi
+
+rsync -avR --delete ${binlog_dir}/* ${binlog_back_dir}/
+
 # 格式化
 parse_json(){
 echo "${1//\"/}" | sed "s/.*$2:\([^,}]*\).*/\1/"
@@ -41,7 +48,6 @@ for item in ${backup_server[*]}
 do
 s_ip=$(parse_json $item "ip")
 echo $s_ip
-rsync -avR --delete  ${binlog_dir}/ $s_ip:/
 rsync -avR --delete  ${back_prefix}/ $s_ip:/
 done
 

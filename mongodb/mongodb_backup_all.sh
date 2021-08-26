@@ -44,7 +44,6 @@ s_ip=$(parse_json $item "ip")
 echo $s_ip
 rsync -avR --delete  ${targetpath}/ $s_ip:/
 done
-done
 
 # 删除3天前的全量备份目录
 backtime=$(date -d '-3 days' "+%Y%m%d")
