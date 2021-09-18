@@ -44,11 +44,11 @@ then
 elif [ -d ${back_dir} ]
 then
         cd ${back_dir} || exit
-        full_backup=`ls -1 | grep  ${current_time} | sort -k 1r | awk 'NR==1{print $1}'`
-        if [ -d ${full_backup:-nodir} ]
+        ncremental_base_dir=`ls -1 | grep  ${current_time} | sort -k 1r | awk 'NR==1{print $1}'`
+        if [ -d ${ncremental_base_dir:-nodir} ]
         then
                 # 增量备份
-                ${innodbupex} ${mysql_cmd} --incremental ${back_dir} --incremental-basedir=${full_backup} 
+                ${innodbupex} ${mysql_cmd} --incremental ${back_dir} --incremental-basedir=${ncremental_base_dir} 
         else
                 # 全量备份
                 ${innodbupex} ${mysql_cmd} ${back_dir}
