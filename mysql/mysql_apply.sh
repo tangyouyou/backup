@@ -17,7 +17,7 @@ if [[ ! -d $back_dir ]]; then
     exit
 fi
 
-cd $back_dir
+cd $back_dir || exit
 
 full_back=`ls -1 | grep  $back_time | sort | awk 'NR==1{print $1}'`
 echo ${full_back}
@@ -42,5 +42,5 @@ ${innodbupex} ${mysql_cmd} --apply-log --redo-only ${back_dir}/${full_back}
 
 echo "use the cmd to rollback Data"
 
-echo "${innodbupex} ${mysql_cmd} --copy-back ${back_dir}/${full_back}"
+${innodbupex} ${mysql_cmd} --copy-back ${back_dir}/${full_back}
 

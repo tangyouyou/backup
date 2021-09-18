@@ -1,16 +1,20 @@
 #!/bin/bash
 #Author:zhongwei
 set -e
+# mongodb 配置
 host=mongodb.service.consul
 port=27017
 user=root
 password=BDRXBkmqblP1
+mongocmd=" --host ${host} --port ${port} -u ${user} -p ${password} --authenticationDatabase admin "
+
+# mongodb 数据备份配置
 sourcepath=/usr/bin/mongodump
 targetpath=/backup/mongodb
 nowtime=`date "+%Y%m%d"`
-mongocmd=" --host ${host} --port ${port} -u $user -p ${password} --authenticationDatabase admin "
 fullpath=${targetpath}/${nowtime}
 backup_server[0]={"ip":"127.0.0.1"} # 日志同步到远程服务器数组
+expire_day=3
 
 # 格式化
 parse_json(){
@@ -46,10 +50,10 @@ rsync -avR --delete  ${targetpath}/ $s_ip:/
 done
 
 # 删除3天前的全量备份目录
-backtime=$(date -d '-3 days' "+%Y%m%d")
+backtime=$(date -d "-${expire_day} days" "+%Y%m%d")
 if [ -d "${targetpath}/${backtime}/" ];then
     rm -rf "${targetpath}/${backtime}/"
-    echo "=======${targetpath}/${backtime}/===删除完毕=="
+    echo "${targetpath}/${backtime} delete SUCCESS"
 fi
  
-echo "========================= $(date) backup all mongodb back end ${nowtime}========="
+echo "$(date) backup all mongodb back end ${nowtime}"
